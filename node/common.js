@@ -166,13 +166,13 @@ var err2str = function (err) {
 
 ////////////////////////////// exports //////////////////////////////
 
-module.exports.setDoInterval = setDoInterval;
-module.exports.setFixInterval = setFixInterval;
-module.exports.setDoFixInterval = setDoFixInterval;
-module.exports.readJSON = readJSON;
-module.exports.readJSONSync = readJSONSync;
-module.exports.runSpawn = runSpawn;
-module.exports.isLocalIp = isLocalIp;
-module.exports.replaceEnv = replaceEnv;
-module.exports.capitalize = capitalize;
-module.exports.err2str = err2str;
+exports.setDoInterval = setDoInterval;
+exports.setFixInterval = setFixInterval;
+exports.setDoFixInterval = setDoFixInterval;
+exports.readJSON = readJSON;
+exports.readJSONSync = readJSONSync;
+exports.runSpawn = runSpawn;
+exports.isLocalIp = isLocalIp;
+exports.replaceEnv = replaceEnv;
+exports.capitalize = capitalize;
+exports.err2str = err2str;
