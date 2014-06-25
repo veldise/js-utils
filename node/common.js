@@ -164,6 +164,23 @@ var err2str = function (err) {
     return err.stack || (_.isString(err)) ? err : JSON.stringify(err);
 };
 
+var extendEx = function (def, ext) {
+    var rst = {};
+    for (var k in def) {
+        if (ext[k] === undefined) {
+            rst[k] = def[k];
+        }
+        else if (typeof ext[k] === 'object') {
+            // Recursive call
+            rst[k] = _extendEx(def[k], ext[k]);
+        }
+        else {
+            rst[k] = ext[k];
+        }
+    }
+    return rst;
+};
+
 ////////////////////////////// exports //////////////////////////////
 
 exports.setDoInterval = setDoInterval;
@@ -176,3 +193,4 @@ exports.isLocalIp = isLocalIp;
 exports.replaceEnv = replaceEnv;
 exports.capitalize = capitalize;
 exports.err2str = err2str;
+exports.extendEx = extendEx;
