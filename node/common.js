@@ -172,7 +172,7 @@ var extendEx = function (def, ext) {
         }
         else if (typeof ext[k] === 'object') {
             // Recursive call
-            rst[k] = _extendEx(def[k], ext[k]);
+            rst[k] = extendEx(def[k], ext[k]);
         }
         else {
             rst[k] = ext[k];
