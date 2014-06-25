@@ -12,7 +12,7 @@ var util = require('util'),
     winston = require('winston'),
     _ = require('underscore');
 
-require('./date.format');
+require('../pure/date.format');
 /**
 *   default
 */
