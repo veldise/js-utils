@@ -1,3 +1,4 @@
+'use strict';
 //////////////////////////////////////////////////
 /**
 *   @file logger 를 정의하는 파일
@@ -7,7 +8,6 @@
 */
 //////////////////////////////////////////////////
 var util = require('util'),
-    fs = require('fs'),
     path = require('path'),
     winston = require('winston'),
     _ = require('underscore');
@@ -38,42 +38,42 @@ exports.createLogger = _createLogger;
 *   winston logger 를 통해 debug level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.debug = function (values) { _putLog('debug', values) };
+exports.debug = function (values) { _putLog('debug', values); };
 /**
 *   winston logger 를 통해 info level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.info = function (values) { _putLog('info', values) };
+exports.info = function (values) { _putLog('info', values); };
 /**
 *   winston logger 를 통해 notice level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.notice = function (values) { _putLog('notice', values) };
+exports.notice = function (values) { _putLog('notice', values); };
 /**
 *   winston logger 를 통해 warning level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.warning = function (values) { _putLog('warning', values) };
+exports.warning = function (values) { _putLog('warning', values); };
 /**
 *   winston logger 를 통해 error level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.error = function (values) { _putLog('error', values) };
+exports.error = function (values) { _putLog('error', values); };
 /**
 *   winston logger 를 통해 crit level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.crit = function (values) { _putLog('crit', values) };
+exports.crit = function (values) { _putLog('crit', values); };
 /**
 *   winston logger 를 통해 alert level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.alert = function (values) { _putLog('alert', values) };
+exports.alert = function (values) { _putLog('alert', values); };
 /**
 *   winston logger 를 통해 emerg level의 log를 기록한다.
 *   @param {string|object} value log에 기록할 값들
 */
-exports.emerg = function (values) { _putLog('emerg', values) };
+exports.emerg = function (values) { _putLog('emerg', values); };
 
 
 /**

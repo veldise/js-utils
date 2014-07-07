@@ -2,11 +2,10 @@
 /**
 *   module dependencies
 */
-var util = require('util'),
-    _ = require('underscore');
+var util = require('util');
 
 var WebSocketClient = require('websocket').client;
-var WebSocketFrame = require('websocket').frame;
+// var WebSocketFrame = require('websocket').frame;
 
 var Duplex = require('stream').Duplex;
 /**
@@ -38,7 +37,7 @@ function WebStream(wsAddress) {
                 })
                 .on('message', function(msg) {
                     if (!msg) {
-                        this.emit('close')
+                        this.emit('close');
                     }
                     var data = {
                         'utf8': msg.utf8Data,

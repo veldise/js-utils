@@ -8,8 +8,7 @@ var os = require('os'),
     _ = require('underscore'),
     child_process = require('child_process');
 
-var exec = child_process.exec,
-    spawn = child_process.spawn;
+var spawn = child_process.spawn;
 
 ////////////////////////////// functions //////////////////////////////
 
@@ -79,7 +78,7 @@ var readJSON = function (filepath, callback) {
     });
 };
 
-var readJSONSync = function (filepath, callback) {
+var readJSONSync = function (filepath) {
     var data = fs.readFileSync(filepath, 'utf8');
 
     return JSON.parse(data);

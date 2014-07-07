@@ -110,7 +110,7 @@ PBSocket.prototype._recv = function () {
 };
 
 PBSocket.prototype._parse = function (chunk) {
-    var packet, err;
+    var packet, err, delegate;
     try {
         packet = this._parser.parse(chunk);
     }
@@ -120,7 +120,7 @@ PBSocket.prototype._parse = function (chunk) {
 
     // check callback
     if (this._queue.length) {
-        var delegate = this._queue[0].delegate;
+        delegate = this._queue[0].delegate;
     }
 
     // check packet

@@ -77,15 +77,16 @@ Manager.prototype.getIDList = function () {
 *   @param {string|instance} target 삭제하려는 instance의 id값 혹은 instance
 */
 Manager.prototype.delete = function (target) {
+    var id, instance;
     // id
     if ( _.isString(target) ) {
-        var id = target,
-            instance = this.dataset[id];
+        id = target;
+        instance = this.dataset[id];
     }
     // instance
     else {
-        var id = target.id,
-            instance = target;
+        id = target.id;
+        instance = target;
     }
 
     delete this.dataset[id];

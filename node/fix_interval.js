@@ -11,7 +11,7 @@ var setFixInterval = function (fn, diff, interval, id) {
     if (interval === undefined) {
         interval = diff;
     }
-    var id = id || _makeId();
+    id = id || _makeId();
 
     oTimers[id] = setTimeout(function () {
         var start = new Date().getTime();
