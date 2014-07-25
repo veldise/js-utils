@@ -142,6 +142,12 @@ Manager.prototype.find = function (iterator) {
 /**
 *
 */
+Manager.prototype.select = function (iterator) {
+    return _.select(this.dataset, iterator);
+};
+/**
+*
+*/
 Manager.prototype.where = function (properties) {
     return _.where(this.dataset, properties);
 };
