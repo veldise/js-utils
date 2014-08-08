@@ -1,0 +1,119 @@
+#!/usr/local/bin/node
+
+'use strict';
+/**
+*   Transform Class
+*/
+var util = require('util'),
+    Transform = require('stream').Transform;
+
+var async = require('async'),
+    _ = require('underscore');
+
+function ConvLF (options) {
+    Transform.call(this, options);
+}
+util.inherits(ConvLF, Transform);
+
+ConvLF.prototype._transform = function (chunk, encoding, done) {
+    this.push(chunk.toString().split('\r\n').join('\n'));
+    done();
+};
+/**
+*   Module dependencies
+*/
+var fs = require('fs'),
+    path = require('path');
+/**
+*   process arguments
+*/
+if (process.argv.length < 3) {
+    console.error([
+        'usage: node',
+        path.basename(__filename, '.js'),
+        '<filepath>'
+    ].join(' '));
+    process.exit();
+}
+
+var bRecursive = _.include(process.argv, '-r'),
+    bForce = _.include(process.argv, '-f'),
+    bDirSkip = false,
+    target = _.without(process.argv.slice(2), '-r', '-f')[0];
+
+crlf2lf(target, function (err) {
+    if (err) {
+        throw err;
+    }
+
+    console.log('complate converting.');
+});
+
+function crlf2lf (targetPath, callback) {
+    // skip hide file
+    if (!bForce && path.basename(targetPath)[0] === '.') {
+        return callback();
+    }
+
+    fs.stat(targetPath, function (err, stat) {
+        if (err) {
+            return callback(err);
+        }
+
+        // file
+        if (stat.isFile()) {
+            convFile(targetPath, callback);
+        }
+        // dir
+        else if (stat.isDirectory()) {
+            if (bDirSkip) {
+                return callback();
+            }
+
+            fs.readdir(targetPath, function (err, list) {
+                if (err) {
+                    return callback(err);
+                }
+
+                list = _.map(list, function (item) {
+                    return path.join(targetPath, item);
+                });
+
+                // skip second recursive call
+                bDirSkip = !bRecursive;
+
+                async.eachSeries(list, crlf2lf, callback);
+            });
+        }
+        // other
+        else {
+            callback();
+        }
+    });
+}
+
+function convFile (filePath, callback) {
+    var tempPath = filePath + '.tmp';
+    var rsFile = fs.createReadStream(filePath),
+        wsTemp = fs.createWriteStream(tempPath),
+        clf = new ConvLF();
+
+    rsFile.pipe(clf).pipe(wsTemp);
+
+    wsTemp.once('finish', function () {
+        var rs = fs.createReadStream(tempPath),
+            ws = fs.createWriteStream(filePath);
+
+        rs.pipe(ws);
+        ws.once('finish', function () {
+            fs.unlink(tempPath, function (err) {
+                if (err) {
+                    return callback(err);
+                }
+
+                console.log('converted(CRLF -> LF):', filePath);
+                callback();
+            });
+        });
+    });
+}
