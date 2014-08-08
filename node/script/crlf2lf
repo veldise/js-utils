@@ -29,8 +29,10 @@ var fs = require('fs'),
 */
 if (process.argv.length < 3) {
     console.error([
-        'usage: node',
+        'usage:',
         path.basename(__filename, '.js'),
+        '[-r]',
+        '[-f]',
         '<filepath>'
     ].join(' '));
     process.exit();
