@@ -114,6 +114,8 @@ var _onread = function (source) {
             this._len = 0;
 
             this._queuing(rawBuf);
+            // next chunk(in socket queue) parsing...
+            process.nextTick(this._onread.bind(this));
         }
     }
 };
