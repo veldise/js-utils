@@ -202,7 +202,7 @@ var Grid = (function ($, Paging, createSelectbox) {
             var arrRow = [];
 
             // sql update/delete 등을 위한 id 설정
-            if (mapId && row[mapId]) {
+            if (mapId && (row[mapId] !== undefined && row[mapId] !== null)) {
                 arrRow.push('<tr data-id="' + row[mapId] + '">');
             } else {
                 arrRow.push('<tr>');
