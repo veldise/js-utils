@@ -38,11 +38,12 @@ $(function () {
             });
 
             $element.text(text);
+            // TODO: trigger를 호출해도 이벤트가 동작하지 않는다.
             // $element.trigger('selectionChange', value, text);
             return $element;
         }
     };
-
+    // Store a reference to the original text method.
     var originTextMethod = $.fn.text;
     // Define overriding method.
     $.fn.text = function(text){
@@ -69,6 +70,7 @@ $(function () {
             });
 
             $element.find('.mu-value').text(text);
+            // TODO: trigger를 호출해도 이벤트가 동작하지 않는다.
             // $element.trigger('selectionChange', value, text);
             return $element;
         }
@@ -164,8 +166,11 @@ var setSelectboxItems = (function () {
         var arrItems = [];
         $(items).each(function (i, item) {
             var strLi = '';
-            if (typeof item === 'object') {
-                strLi = '<li value="' + item.value + '">' + item.text + '</li>';
+            if ($.type(item) === 'object') {
+                var value = ($.type(item.value) === 'number') ? (item.value + '') : item.value;
+                var text = ($.type(item.text) === 'number') ? (item.text + '') : item.text;
+
+                strLi = '<li value="' + (value || '') + '">' + (text || '') + '</li>';
             }
             else {
                 strLi = '<li value="' + item + '">' + item + '</li>';
@@ -174,7 +179,7 @@ var setSelectboxItems = (function () {
         });
 
         $box.children('.mu-list').html(arrItems.join(''));
-        $box.children('.mu-value').text(items[0].text || items[0]);
+        // $box.children('.mu-value').text(items[0].text || items[0]);
 
         return $box;
     };

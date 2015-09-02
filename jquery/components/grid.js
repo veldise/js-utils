@@ -25,9 +25,10 @@ var Grid = (function ($, Paging, createSelectbox) {
         this.key = selector.replace(/(\#|\.)/, '').trim().split(/\s+/)[0];
 
         this._checkbox = true; // 첫번째 열에 checkbox 구성할지 여부
-        this._maps = []; // property match 정보 배열
         this._cols = []; // thead 구성을 위한 배열
         this._rows = []; // tbody 구성을 위한 데이터
+        this._maps = []; // property match 정보 배열
+        this._mapId = null;
 
         this.paging = null;
         this.$selectbox = null;
@@ -218,8 +219,9 @@ var Grid = (function ($, Paging, createSelectbox) {
                 ].join(''));
             }
             $(maps).each(function (mi, map) {
-                if (typeof map === 'string') {
-                    arrRow.push('<td>' + (row[map] || '') + '</td>');
+                if ($.type(map) === 'string') {
+                    var value = ($.type(row[map]) === 'number') ? (row[map] + '') : row[map];
+                    arrRow.push('<td>' + (value || '') + '</td>');
                 }
                 else if (map.type === 'no') {
                     var no = (ri + ((pagingInfo.currentPageNumber - 1) * pagingInfo.rowsPerPage) + 1);
@@ -356,7 +358,9 @@ var Grid = (function ($, Paging, createSelectbox) {
             var id = ids[i];
             for (var j = rows.length - 1; j >= 0; j--) {
                 var row = rows[j];
-                if (ids[i] === row[mapId]) {
+                // NOTE: ids[i]는 element 속성값이므로 반드시 string 이지만,
+                // row[mapId]은 number일 경우가 있다.
+                if (ids[i] === (row[mapId] + '')) {
                     rst.push(row);
                     break;
                 }

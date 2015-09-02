@@ -32,6 +32,14 @@ var openDialog = (function ($) {
                 //     at: 'center center',
                 //     collision: 'fit flip'
                 // });
+
+            // yes/no/close button listener
+            $dlg.find('.btn-yes').on('click', function () {
+                callback(closeDlg);
+            });
+            $dlg.find('.btn-close').one('click', function () {
+                closeDlg();
+            });
         };
         var closeDlg = function () {
             $('.mu-dialog-background').addClass('hidden');
@@ -39,19 +47,17 @@ var openDialog = (function ($) {
             $dlg
                 .appendTo($parent)
                 .addClass('hidden')
+
+            // clean listener
+            $dlg.find('.btn-yes').off('click');
+            $dlg.find('.btn-close').off('click');
         };
         var isOpened = function () {
             return !$dlg.hasClass('hidden');
         };
-        // run
+        /**
+        *   run
+        */
         openDlg();
-
-        $dlg.find('.btn-yes').one('click', function () {
-            callback();
-            closeDlg();
-        });
-        $dlg.find('.btn-close').one('click', function () {
-            closeDlg();
-        });
     };
 })($);

@@ -87,8 +87,8 @@ var Paging = (function ($) {
         var arrBtns = [];
 
         // make first, prev button
-        arrBtns.push('<button type="button" class="mu-first"><span></span></button>');
-        arrBtns.push('<button type="button" class="mu-prev"><span></span></button>');
+        arrBtns.push('<button type="button" class="mu-btn mu-first"><span></span></button>');
+        arrBtns.push('<button type="button" class="mu-btn mu-prev"><span></span></button>');
 
         var division_1 = parseInt(this._totalCount / this._rowsPerPage);
         var division_2 = parseInt(this._totalCount % this._rowsPerPage);
@@ -132,8 +132,8 @@ var Paging = (function ($) {
         arrBtns.push('</ul>');
 
         // make next, last button
-        arrBtns.push('<button type="button" class="mu-next"><span></span></button>');
-        arrBtns.push('<button type="button" class="mu-last"><span></span></button>');
+        arrBtns.push('<button type="button" class="mu-btn mu-next"><span></span></button>');
+        arrBtns.push('<button type="button" class="mu-btn mu-last"><span></span></button>');
 
         // set template
         this.el.html(arrBtns.join(''));
