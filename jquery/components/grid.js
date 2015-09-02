@@ -315,7 +315,7 @@ var Grid = (function ($, Paging, createSelectbox) {
         var _this = this;
 
         // 페이지가 변경되었을 때 이벤트
-        paging.on('move', function (e, pageNum) {
+        paging.on('move', function (/*e, pageNum*/) {
             _this.make();
         });
 
@@ -360,7 +360,7 @@ var Grid = (function ($, Paging, createSelectbox) {
                 var row = rows[j];
                 // NOTE: ids[i]는 element 속성값이므로 반드시 string 이지만,
                 // row[mapId]은 number일 경우가 있다.
-                if (ids[i] === (row[mapId] + '')) {
+                if (id === (row[mapId] + '')) {
                     rst.push(row);
                     break;
                 }

@@ -108,7 +108,7 @@ var createSelectbox = (function ($) {
         /**
         *   events
         */
-        var oneDocsClick = function (e) {
+        var oneDocsClick = function () {
             closeBox();
             clearListeners();
         };
@@ -122,7 +122,8 @@ var createSelectbox = (function ($) {
             // set view text
             $box.children('.mu-value').text(text);
             // trigger custom event
-            $box.trigger('selectionChange', value, text);
+            // TODO: jquery trigger는 하나의 값만 전달할 수 있다.
+            $box.trigger('selectionChange', value/*, text*/);
 
             closeBox();
             clearListeners();

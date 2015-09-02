@@ -2,6 +2,26 @@
 *
 */
 var openDialog = (function ($) {
+    /**
+    *
+    */
+    function getCenterPos (el) {
+        var $document = $(document);
+        var $window = $(window);
+
+        var centerXPos = $document.scrollLeft() + $window.width() / 2;
+        var centerYPos = $document.scrollTop() + $window.height() / 2;
+        var elWidth = el.outerWidth();
+        var elHeight = el.outerHeight();
+
+        return {
+            x: centerXPos - elWidth / 2,
+            y: centerYPos - elHeight / 2
+        };
+    }
+    /**
+    *
+    */
     return function openDialog (selector, callback) {
         var $dlg = $(selector);
 
@@ -46,7 +66,7 @@ var openDialog = (function ($) {
 
             $dlg
                 .appendTo($parent)
-                .addClass('hidden')
+                .addClass('hidden');
 
             // clean listener
             $dlg.find('.btn-yes').off('click');
