@@ -13,11 +13,30 @@ var Grid = (function ($, Paging, createSelectbox) {
             console.error('not found element:', selector);
         }
 
-        if (!this.el.children('thead').length) {
-            this.el.append('<thead></thead>');
+        if (this.el.is('table')) {
+            if (!this.el.children('thead').length) {
+                this.el.append('<thead></thead>');
+            }
+            if (!this.el.children('tbody').length) {
+                this.el.append('<tbody></tbody>');
+            }
         }
-        if (!this.el.children('tbody').length) {
-            this.el.append('<tbody></tbody>');
+        else {
+            if (this.el.find('table').length < 2) {
+                console.error('need two table elements:', selector);
+                return;
+            }
+
+            // NOTE: 무조건 첫번째 table을 head로 인식
+            this.elHead = this.el.find('table').eq(0);
+            this.elBody = this.el.find('table').eq(1);
+
+            if (!this.elHead.children('thead').length) {
+                this.elHead.append('<thead></thead>');
+            }
+            if (!this.elBody.children('tbody').length) {
+                this.elBody.append('<tbody></tbody>');
+            }
         }
 
         // selector를 가지고 고유키를 생성
@@ -144,7 +163,7 @@ var Grid = (function ($, Paging, createSelectbox) {
 
     //========================= drawing =========================//
 
-    Grid.prototype._makeHead = function() {
+    Grid.prototype._makeHeadTemplate = function() {
         var key = this.key;
         var cols = this._cols;
         var isCheckbox = this._checkbox;
@@ -170,9 +189,9 @@ var Grid = (function ($, Paging, createSelectbox) {
         });
         arrHead.push('</tr>');
 
-        this.el.children('thead').html(arrHead.join(''));
+        return arrHead.join('');
     };
-    Grid.prototype._makeBody = function() {
+    Grid.prototype._makeBodyTemplate = function() {
         var key = this.key;
         var maps = this._maps;
         var mapId = this._mapId;
@@ -255,45 +274,54 @@ var Grid = (function ($, Paging, createSelectbox) {
             arrBody.push(arrRow.join(''));
         });
 
-        this.el.children('tbody').html(arrBody.join(''));
-
         // save
         this._viewRows = rows;
+
+        return arrBody.join('');
+    };
+
+    Grid.prototype._listenCheckboxEvents = function () {
+        var el = this.el;
+        // 테이블 헤더에 있는 checkbox 클릭시
+        el.find(':checkbox:first').click(function () {
+            // 클릭한 체크박스가 체크상태인지 체크해제상태인지 판단
+            if ($(this).is(':checked')) {
+                el.find(':checkbox').prop('checked', 'checked');
+            } else {
+                el.find(':checkbox').removeAttr('checked');
+            }
+
+            // 모든 체크박스에 change 이벤트 발생시키기
+            $(':checkbox', el).trigger('change');
+        });
+        // 헤더에 있는 체크박스외 다른 체크박스 클릭시
+        el.find(':checkbox:not(:first)').click(function () {
+            var allCnt = el.find(':checkbox:not(:first)').length;
+            var checkedCnt =el.find(':checkbox:not(:first)').filter(':checked').length;
+
+            // 전체 체크박스 갯수와 현재 체크된 체크박스 갯수를 비교해서 헤더에 있는 체크박스 체크할지 말지 판단
+            if (allCnt === checkedCnt) {
+                el.find(':checkbox:first').prop('checked', 'checked');
+            } else {
+                el.find(':checkbox:first').removeAttr('checked');
+            }
+        });
     };
 
     Grid.prototype.make = function() {
-        var isCheckbox = this._checkbox;
-
-        this._makeHead();
-        this._makeBody();
+        if (this.el.is('table')) {
+            this.el.children('thead').html(this._makeHeadTemplate());
+            this.el.children('tbody').html(this._makeBodyTemplate());
+        }
+        else {
+            this.elHead.children('thead').html(this._makeHeadTemplate());
+            this.elBody.children('tbody').html(this._makeBodyTemplate());
+        }
 
         // checkbox events
+        var isCheckbox = this._checkbox;
         if (isCheckbox) {
-            var el = this.el;
-            // 테이블 헤더에 있는 checkbox 클릭시
-            el.find(':checkbox:first').click(function () {
-                // 클릭한 체크박스가 체크상태인지 체크해제상태인지 판단
-                if ($(this).is(':checked')) {
-                    el.find(':checkbox').prop('checked', 'checked');
-                } else {
-                    el.find(':checkbox').removeAttr('checked');
-                }
-
-                // 모든 체크박스에 change 이벤트 발생시키기
-                $(':checkbox', el).trigger('change');
-            });
-            // 헤더에 있는 체크박스외 다른 체크박스 클릭시
-            el.find(':checkbox:not(:first)').click(function () {
-                var allCnt = el.find(':checkbox:not(:first)').length;
-                var checkedCnt =el.find(':checkbox:not(:first)').filter(':checked').length;
-
-                // 전체 체크박스 갯수와 현재 체크된 체크박스 갯수를 비교해서 헤더에 있는 체크박스 체크할지 말지 판단
-                if (allCnt === checkedCnt) {
-                    el.find(':checkbox:first').prop('checked', 'checked');
-                } else {
-                    el.find(':checkbox:first').removeAttr('checked');
-                }
-            });
+            this._listenCheckboxEvents();
         }
 
         if (this.paging) {

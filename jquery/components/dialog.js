@@ -31,12 +31,11 @@ var openDialog = (function ($) {
         }
 
         var $parent = $dlg.parent();
+        var $background = $('.mu-dialog-background');
         /**
         *   open/close
         */
         var openDlg = function () {
-            $('.mu-dialog-background').removeClass('hidden');
-
             var pos = getCenterPos($dlg);
 
             $dlg
@@ -53,6 +52,8 @@ var openDialog = (function ($) {
                 //     collision: 'fit flip'
                 // });
 
+            $background.removeClass('hidden');
+
             // yes/no/close button listener
             $dlg.find('.btn-yes').on('click', function () {
                 callback(closeDlg);
@@ -62,11 +63,13 @@ var openDialog = (function ($) {
             });
         };
         var closeDlg = function () {
-            $('.mu-dialog-background').addClass('hidden');
-
             $dlg
                 .appendTo($parent)
                 .addClass('hidden');
+
+            if (!$('body').children('.mu-dialog').length) {
+                $background.addClass('hidden');
+            }
 
             // clean listener
             $dlg.find('.btn-yes').off('click');
