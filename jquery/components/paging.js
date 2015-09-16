@@ -215,11 +215,11 @@ var Paging = (function ($) {
     //========================= ... =========================//
 
     Paging.prototype.move = function(pageNum) {
-        if (pageNum < 1) {
-            pageNum = 1;
-        }
         if (pageNum > this._totalPageCount) {
             pageNum = this._totalPageCount;
+        }
+        if (pageNum < 1) {
+            pageNum = 1;
         }
 
         // set

@@ -88,6 +88,12 @@ var Grid = (function ($, Paging, createSelectbox) {
             return this._rows;
         }
         this._rows = _rows;
+
+        // NOTE: 데이터가 완전히 바뀌었을 경우 paging을 초기화
+        // WRAN: 임시 조치. getter/setter 일관성이 깨지면 안되므로 추후 init() 등으로 이동해야 한다.
+        if (this.paging) {
+            this.paging.move(1);
+        }
         return this;
     };
     Grid.prototype.maps = function(_maps) {
@@ -163,6 +169,18 @@ var Grid = (function ($, Paging, createSelectbox) {
 
     //========================= drawing =========================//
 
+    Grid.prototype._setNoResultText = function () {
+        var colLen = this._maps.length + ((this._checkbox) ? 1 : 0);
+        var template = '<tr><td colspan="' + colLen + '" align="center">조회 결과가 없습니다.</td></tr>';
+
+        if (this.el.is('table')) {
+            this.el.children('tbody').html(template);
+        }
+        else {
+            this.elBody.children('tbody').html(template);
+        }
+    };
+
     Grid.prototype._makeHeadTemplate = function() {
         var key = this.key;
         var cols = this._cols;
@@ -205,8 +223,7 @@ var Grid = (function ($, Paging, createSelectbox) {
         var arrBody = [];
 
         if (!rows.length) {
-            var colLen = maps.length + ((isCheckbox) ? 1 : 0);
-            this.el.children('tbody').html('<tr><td colspan="' + colLen + '" align="center">조회 결과가 없습니다.</td></tr>');
+            this._setNoResultText();
             return;
         }
 
@@ -245,6 +262,9 @@ var Grid = (function ($, Paging, createSelectbox) {
                 else if (map.type === 'no') {
                     var no = (ri + ((pagingInfo.currentPageNumber - 1) * pagingInfo.rowsPerPage) + 1);
                     arrRow.push('<td>' + no + '</td>');
+                }
+                else {
+                    arrRow.push('<td></td>');
                 }
                 // else if (map.type === 'mod') {
                 //     arrRow.push([

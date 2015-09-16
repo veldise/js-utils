@@ -98,6 +98,8 @@ var createSelectbox = (function ($) {
             $('.mu-selectbox').removeClass('on');
 
             $box.addClass('on');
+
+            $box.find('.mu-list').width($box.width() - 2);
         };
         var closeBox = function () {
             $box.removeClass('on');
