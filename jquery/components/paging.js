@@ -79,7 +79,7 @@ var Paging = (function ($) {
     //========================= drawing =========================//
 
     Paging.prototype.make = function() {
-        if (this._totalCount === 0) {
+        if (!this._totalCount) {
             this.el.html('');
             return;
         }

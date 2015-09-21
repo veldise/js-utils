@@ -222,7 +222,7 @@ var Grid = (function ($, Paging, createSelectbox) {
 
         var arrBody = [];
 
-        if (!rows.length) {
+        if (!rows || !rows.length) {
             this._setNoResultText();
             return;
         }
@@ -398,24 +398,50 @@ var Grid = (function ($, Paging, createSelectbox) {
     };
     Grid.prototype.getCheckedRows = function() {
         var mapId = this._mapId;
+        // NOTE: checked는 view rows 에서만 구해도 된다.
         var rows = this._viewRows;
         var ids = this.getCheckedId();
         var rst = [];
 
-        for (var i = ids.length - 1; i >= 0; i--) {
-            var id = ids[i];
-            for (var j = rows.length - 1; j >= 0; j--) {
-                var row = rows[j];
-                // NOTE: ids[i]는 element 속성값이므로 반드시 string 이지만,
-                // row[mapId]은 number일 경우가 있다.
-                if (id === (row[mapId] + '')) {
-                    rst.push(row);
-                    break;
-                }
+        for (var i = 0, l = rows.length; i < l; i++) {
+            var row = rows[i];
+            // NOTE: id는 element 속성값이므로 반드시 string 이지만,
+            // row[mapId]은 number일 경우가 있다.
+            if (_include(ids, (row[mapId] + ''))) {
+                rst.push(row);
             }
         }
+
         return rst;
     };
+    Grid.prototype.getUncheckedRows = function() {
+        var mapId = this._mapId;
+        var rows = this._rows;
+        var ids = this.getCheckedId();
+        var rst = [];
+
+        for (var i = 0, l = rows.length; i < l; i++) {
+            var row = rows[i];
+            // NOTE: id는 element 속성값이므로 반드시 string 이지만,
+            // row[mapId]은 number일 경우가 있다.
+            if (!_include(ids, (row[mapId] + ''))) {
+                rst.push(row);
+            }
+        }
+
+        return rst;
+    };
+    /**
+    *   utility
+    */
+    function _include (arr, item) {
+        for (var i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] === item) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     return Grid;
 })($, Paging, createSelectbox);

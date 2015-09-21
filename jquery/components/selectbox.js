@@ -37,7 +37,9 @@ $(function () {
                 }
             });
 
-            $element.text(text);
+            if (text) {
+                $element.find('.mu-value').text(text);
+            }
             // TODO: trigger를 호출해도 이벤트가 동작하지 않는다.
             // $element.trigger('selectionChange', value, text);
             return $element;
