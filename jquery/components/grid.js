@@ -52,6 +52,8 @@ var Grid = (function ($, Paging, createSelectbox) {
         this.paging = null;
         this.$selectbox = null;
 
+        this._iterCellTemplate = {};
+
         // paging, selectbox 연동
         if (pagingSelector) {
             this.connPaging(new Paging(pagingSelector));
@@ -88,12 +90,6 @@ var Grid = (function ($, Paging, createSelectbox) {
             return this._rows;
         }
         this._rows = _rows;
-
-        // NOTE: 데이터가 완전히 바뀌었을 경우 paging을 초기화
-        // WRAN: 임시 조치. getter/setter 일관성이 깨지면 안되므로 추후 init() 등으로 이동해야 한다.
-        if (this.paging) {
-            this.paging.move(1);
-        }
         return this;
     };
     Grid.prototype.maps = function(_maps) {
@@ -329,13 +325,33 @@ var Grid = (function ($, Paging, createSelectbox) {
     };
 
     Grid.prototype.make = function() {
+        if (this.paging) {
+            this.paging.make();
+        }
+
+        var $thead, $tbody;
+
         if (this.el.is('table')) {
-            this.el.children('thead').html(this._makeHeadTemplate());
-            this.el.children('tbody').html(this._makeBodyTemplate());
+            $thead = this.el.children('thead');
+            $tbody = this.el.children('tbody');
         }
         else {
-            this.elHead.children('thead').html(this._makeHeadTemplate());
-            this.elBody.children('tbody').html(this._makeBodyTemplate());
+            $thead = this.elHead.children('thead');
+            $tbody = this.elBody.children('tbody');
+        }
+
+        $thead.html(this._makeHeadTemplate());
+        $tbody.html(this._makeBodyTemplate());
+
+        for (var index in this._iterCellTemplate) {
+            var iter = this._iterCellTemplate[index];
+            index = index * 1; // parse int
+            var colIndex = (this._checkbox) ? ((index) + 1) : index;
+
+            $tbody
+                .find('tr')
+                .find('td:eq(' + colIndex + ')')
+                .each(iter);
         }
 
         // checkbox events
@@ -344,9 +360,10 @@ var Grid = (function ($, Paging, createSelectbox) {
             this._listenCheckboxEvents();
         }
 
-        if (this.paging) {
-            this.paging.make();
-        }
+        return this;
+    };
+    Grid.prototype.eachCell = function(colIndex, iter) {
+        this._iterCellTemplate[colIndex] = iter;
 
         return this;
     };

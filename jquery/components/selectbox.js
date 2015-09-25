@@ -160,7 +160,7 @@ var setSelectboxItems = (function () {
     /**
     *
     */
-    return function setSelectboxOptions(selector, items) {
+    return function setSelectboxItems(selector, items) {
         var $box = $(selector);
 
         if (!$box.length) {

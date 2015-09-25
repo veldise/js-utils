@@ -10,7 +10,7 @@ var openDialog = (function ($) {
         var $window = $(window);
 
         var centerXPos = $document.scrollLeft() + $window.width() / 2;
-        var centerYPos = $document.scrollTop() + $window.height() / 2;
+        var centerYPos = $document.scrollTop() + $window.height() / 5 * 2;
         var elWidth = el.outerWidth();
         var elHeight = el.outerHeight();
 
@@ -18,6 +18,22 @@ var openDialog = (function ($) {
             x: centerXPos - elWidth / 2,
             y: centerYPos - elHeight / 2
         };
+    }
+    function setMovable (element, options) {
+        // default options
+        var moveOption = {
+            scroll: false,
+            containment: 'window',
+            // handle은 head
+            handle: element.find('.mu-dialog-head')
+        };
+
+        if (options && $.type(options) === 'object') {
+            moveOption = _.defaults(options, moveOption);
+        }
+
+        // draggable 대상은 dialog
+        element.draggable(moveOption);
     }
     /**
     *
@@ -29,6 +45,8 @@ var openDialog = (function ($) {
             console.error('not found element:', selector);
             return;
         }
+
+        setMovable($dlg);
 
         var $parent = $dlg.parent();
         var $background = $('.mu-dialog-background');
