@@ -44,6 +44,7 @@ var Grid = (function ($, Paging, createSelectbox) {
         this.key = selector.replace(/(\#|\.)/, '').trim().split(/\s+/)[0];
 
         this._checkbox = true; // 첫번째 열에 checkbox 구성할지 여부
+        this._sorting = true; // thead 클릭으로 데이터를 정렬할지 여부
         this._cols = []; // thead 구성을 위한 배열
         this._rows = []; // tbody 구성을 위한 데이터
         this._maps = []; // property match 정보 배열
@@ -53,6 +54,9 @@ var Grid = (function ($, Paging, createSelectbox) {
         this.$selectbox = null;
 
         this._iterCellTemplate = {};
+        this._orderByMap = ''; // 현재 정렬 기준 map
+        this._predicate = ''; // 정렬 방향('asc' || 'desc')
+        this._listenerSort = null;
 
         // paging, selectbox 연동
         if (pagingSelector) {
@@ -76,6 +80,13 @@ var Grid = (function ($, Paging, createSelectbox) {
             return this._checkbox;
         }
         this._checkbox = _checkbox;
+        return this;
+    };
+    Grid.prototype.sorting = function(_sorting) {
+        if (!arguments.length) {
+            return this._sorting;
+        }
+        this._sorting = _sorting;
         return this;
     };
     Grid.prototype.cols = function(_cols) {
@@ -149,17 +160,21 @@ var Grid = (function ($, Paging, createSelectbox) {
     //========================= events =========================//
 
     Grid.prototype.on = function(eventName, listener) {
-        // 페이지가 변경되었을 때 이벤트
+        // 페이지가 변경되었을 때
         if (eventName === 'move') {
             if (this.paging) {
                 this.paging.on(eventName, listener);
             }
         }
-        // selectbox로 rowPerPage 값이 변경되었을 때 이벤트
+        // rowPerPage selectbox값이 변경되었을 때
         else if (eventName === 'changePerPage') {
             if (this.$selectbox) {
                 this.$selectbox('selectionChange', listener);
             }
+        }
+        // thead th를 클릭을 통한 정렬 동작을 사용자가 제어하려고 할 때
+        else if (eventName === 'sort') {
+            this._listenerSort = listener;
         }
     };
 
@@ -323,6 +338,62 @@ var Grid = (function ($, Paging, createSelectbox) {
             }
         });
     };
+    Grid.prototype._listenThead = function () {
+        var _this = this;
+        var el = this.el;
+
+        el.find('thead > tr > th,td').click(function () {
+            var $th = $(this);
+            var $ths = $th.parent().children('th,td');
+
+            var elIndex = $ths.index($th);
+            var index = (_this._checkbox) ? (elIndex - 1) : elIndex;
+            if (index < 0) {
+                return;
+            }
+
+            var col = _this._cols[index];
+            var map = _this._maps[index];
+            var predicate = _this._predicate;
+
+            if (_this._orderByMap !== map) {
+                predicate = 'asc';
+            }
+            else {
+                // toggle
+                predicate = (predicate === 'asc') ? 'desc' : 'asc';
+            }
+            _this._orderByMap = map;
+            _this._predicate = predicate;
+
+            // run sort
+            if (_this._listenerSort) {
+                _this._listenerSort(index, col, map, predicate);
+            }
+            else {
+                var reverse = (_this._predicate === 'desc') ? -1 : 1;
+
+                _this._rows.sort(function (a, b) {
+                    if (a[map] === b[map]) {
+                        return 0;
+                    }
+                    return reverse * ((a[map] > b[map]) ? 1 : -1);
+                });
+                _this.make();
+            }
+
+            // change css class
+            // NOTE: make()를 수행하게 되면 기존 element가 전부 날아가므로 다시 find 수행
+            el
+                .find('thead > tr > th,td')
+                .removeClass('up')
+                .removeClass('down');
+            el
+                .find('thead > tr')
+                .find('th:eq(' + elIndex + '),td:eq(' + elIndex + ')')
+                .addClass((predicate === 'asc') ? 'up' : 'down');
+        });
+    };
 
     Grid.prototype.make = function() {
         if (this.paging) {
@@ -343,21 +414,29 @@ var Grid = (function ($, Paging, createSelectbox) {
         $thead.html(this._makeHeadTemplate());
         $tbody.html(this._makeBodyTemplate());
 
-        for (var index in this._iterCellTemplate) {
-            var iter = this._iterCellTemplate[index];
-            index = index * 1; // parse int
-            var colIndex = (this._checkbox) ? ((index) + 1) : index;
+        var iters = this._iterCellTemplate;
+        for (var index in iters) {
+            if (iters.hasOwnProperty(index)) {
+                var iter = iters[index];
+                index = index * 1; // parse int
+                var colIndex = (this._checkbox) ? ((index) + 1) : index;
 
-            $tbody
-                .find('tr')
-                .find('td:eq(' + colIndex + ')')
-                .each(iter);
+                $tbody
+                    .find('tr')
+                    .find('td:eq(' + colIndex + ')')
+                    .each(iter);
+            }
         }
 
         // checkbox events
         var isCheckbox = this._checkbox;
         if (isCheckbox) {
             this._listenCheckboxEvents();
+        }
+        // sort(thead click) events
+        var isSorting = this._sorting;
+        if (isSorting) {
+            this._listenThead();
         }
 
         return this;
