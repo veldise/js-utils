@@ -38,7 +38,7 @@ var openDialog = (function ($) {
     /**
     *
     */
-    return function openDialog (selector, callback) {
+    return function openDialog (selector, yesCallback, closeCallback) {
         var $dlg = $(selector);
 
         if (!$dlg.length) {
@@ -74,10 +74,20 @@ var openDialog = (function ($) {
 
             // yes/no/close button listener
             $dlg.find('.btn-yes').on('click', function () {
-                callback(closeDlg);
+                if (yesCallback) {
+                    yesCallback(closeDlg);
+                }
+                else {
+                    closeDlg();
+                }
             });
-            $dlg.find('.btn-close').one('click', function () {
-                closeDlg();
+            $dlg.find('.btn-close').on('click', function () {
+                if (closeCallback) {
+                    closeCallback(closeDlg);
+                }
+                else {
+                    closeDlg();
+                }
             });
         };
         var closeDlg = function () {
