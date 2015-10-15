@@ -120,8 +120,9 @@ var createSelectbox = (function ($) {
             // document click event 전달 방지
             e.stopPropagation();
 
-            var value = $(e.target).attr('value');
-            var text = $(e.target).text();
+            var $target = $(e.target);
+            var value = $target.attr('value');
+            var text = $target.text();
 
             // set view text
             $box.children('.mu-value').text(text);
@@ -133,7 +134,7 @@ var createSelectbox = (function ($) {
             clearListeners();
         };
         var clearListeners = function () {
-            $box.children('.mu-list').off('click', oneListClick);
+            $box.find('.mu-list > li').off('click', oneListClick);
             $(document).off('click', oneDocsClick);
         };
         var boxClickListener = function (e) {
@@ -147,7 +148,7 @@ var createSelectbox = (function ($) {
                 openBox();
 
                 $(document).one('click', oneDocsClick);
-                $box.children('.mu-list').one('click', oneListClick);
+                $box.find('.mu-list > li').one('click', oneListClick);
             }
         };
         $box.on('click', boxClickListener);
