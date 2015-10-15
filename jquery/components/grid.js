@@ -411,8 +411,12 @@ var Grid = (function ($, Paging, createSelectbox) {
             $tbody = this.elBody.children('tbody');
         }
 
-        $thead.html(this._makeHeadTemplate());
-        $tbody.html(this._makeBodyTemplate());
+        if (this._cols.length) {
+            $thead.html(this._makeHeadTemplate());
+        }
+        if (this._maps.length) {
+            $tbody.html(this._makeBodyTemplate());
+        }
 
         var iters = this._iterCellTemplate;
         for (var index in iters) {
