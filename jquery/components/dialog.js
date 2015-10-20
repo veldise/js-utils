@@ -104,6 +104,10 @@ var openDialog = (function ($) {
             $dlg.find('.btn-close').off('click');
         };
         var offsetDlg = function (offset) {
+            if (!arguments.length) {
+                return $dlg.offset();
+            }
+
             var left, top;
             if ($.type(offset) === 'number') {
                 left = arguments[0];
