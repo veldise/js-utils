@@ -103,6 +103,22 @@ var openDialog = (function ($) {
             $dlg.find('.btn-yes').off('click');
             $dlg.find('.btn-close').off('click');
         };
+        var offsetDlg = function (offset) {
+            var left, top;
+            if ($.type(offset) === 'number') {
+                left = arguments[0];
+                top = arguments[1];
+            }
+            else {
+                left = offset.left || offset.x;
+                top = offset.top || offset.y;
+            }
+
+            $dlg.offset({
+                left: left,
+                top: top
+            });
+        };
         var isOpened = function () {
             return !$dlg.hasClass('hidden');
         };
@@ -110,5 +126,11 @@ var openDialog = (function ($) {
         *   run
         */
         openDlg();
+
+        return {
+            open: openDlg,
+            close: closeDlg,
+            offset: offsetDlg
+        };
     };
 })($);
