@@ -49,13 +49,24 @@ var openDialog = (function ($) {
         setMovable($dlg);
 
         var $parent = $dlg.parent();
-        var $background = $('.mu-dialog-background');
+        var $background = $dlg.prev('.mu-dialog-background');
         /**
         *   open/close
         */
         var openDlg = function () {
+            var nDlg = $('body').children('.mu-dialog').length;
+            if (nDlg > 0) {
+                // 제일 마지막에 띄워진 dialog 기준
+                var zIndex = $('body').children('.mu-dialog').last().zIndex();
+                $background.zIndex(zIndex + 1);
+                $dlg.zIndex(zIndex + 2);
+            }
+
             var pos = getCenterPos($dlg);
 
+            $background
+                .appendTo('body')
+                .removeClass('hidden');
             $dlg
                 .appendTo('body')
                 .removeClass('hidden')
@@ -69,8 +80,6 @@ var openDialog = (function ($) {
                 //     at: 'center center',
                 //     collision: 'fit flip'
                 // });
-
-            $background.removeClass('hidden');
 
             // yes/no/close button listener
             $dlg.find('.btn-yes').on('click', function () {
@@ -91,12 +100,19 @@ var openDialog = (function ($) {
             });
         };
         var closeDlg = function () {
+            $background
+                .appendTo($parent)
+                .addClass('hidden');
             $dlg
                 .appendTo($parent)
                 .addClass('hidden');
 
-            if (!$('body').children('.mu-dialog').length) {
-                $background.addClass('hidden');
+            var nDlg = $('body').children('.mu-dialog').length;
+            if (nDlg > 0) {
+                // 제일 아래 위치한 dialog 기준
+                var zIndex = $('body').children('.mu-dialog').first().zIndex();
+                $background.zIndex(zIndex);
+                $dlg.zIndex(zIndex);
             }
 
             // clean listener
