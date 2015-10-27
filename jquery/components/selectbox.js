@@ -2,13 +2,17 @@
 *
 */
 $(function () {
+    function isSelectbox (el) {
+        return el.hasClass('mu-selectbox');
+    }
+
     // Store a reference to the original val method.
     var originValMethod = $.fn.val;
     // Define overriding method.
     $.fn.val = function(value){
         var $element = $(this);
         // Execute the original method.
-        if (!$element.hasClass('mu-selectbox')) {
+        if (!isSelectbox($element)) {
             return originValMethod.apply(this, arguments);
         }
 
@@ -51,7 +55,7 @@ $(function () {
     $.fn.text = function(text){
         var $element = $(this);
         // Execute the original method.
-        if (!$element.hasClass('mu-selectbox')) {
+        if (!isSelectbox($element)) {
             return originTextMethod.apply(this, arguments);
         }
 
@@ -101,7 +105,8 @@ var createSelectbox = (function ($) {
 
             $box.addClass('on');
 
-            $box.find('.mu-list').width($box.width() - 2);
+            // NOTE: 다이얼로그 안에 배치할 경우 처리
+            // $box.find('.mu-list').width($box.width() - 2);
         };
         var closeBox = function () {
             $box.removeClass('on');
@@ -119,6 +124,7 @@ var createSelectbox = (function ($) {
         var oneListClick = function (e) {
             // document click event 전달 방지
             e.stopPropagation();
+            e.preventDefault();
 
             var $target = $(e.target);
             var value = $target.attr('value');
@@ -139,6 +145,7 @@ var createSelectbox = (function ($) {
         };
         var boxClickListener = function (e) {
             e.stopPropagation();
+            e.preventDefault();
 
             if (isOpened()) {
                 closeBox();
