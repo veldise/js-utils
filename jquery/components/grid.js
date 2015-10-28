@@ -169,7 +169,7 @@ var Grid = (function ($, Paging, createSelectbox) {
         // rowPerPage selectbox값이 변경되었을 때
         else if (eventName === 'changePerPage') {
             if (this.$selectbox) {
-                this.$selectbox('selectionChange', listener);
+                this.$selectbox.on('selectionChange', listener);
             }
         }
         // thead th를 클릭을 통한 정렬 동작을 사용자가 제어하려고 할 때
